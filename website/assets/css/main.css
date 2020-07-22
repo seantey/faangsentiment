@@ -2705,31 +2705,38 @@ input, select, textarea {
 						margin-bottom: 0;
 					}
 
+			/* Tiles Modified CSS */
+			.tiles article.style1 {
+				background-color: #4267B2;
+				border-radius: 4px;
+			}
+
+
 			.tiles article.style1 > .image:before {
-				background-color: #f2849e;
+				background-color: #4267B2;
 			}
 
 			.tiles article.style2 > .image:before {
-				background-color: #7ecaf6;
+				background-color: #FF9900;
 			}
 
 			.tiles article.style3 > .image:before {
-				background-color: #7bd0c1;
+				background-color: #555555;
 			}
 
 			.tiles article.style4 > .image:before {
-				background-color: #c75b9b;
+				background-color: #E50914;
 			}
 
 			.tiles article.style5 > .image:before {
-				background-color: #ae85ca;
+				background-color: #0F9D58;
 			}
 
-			.tiles article.style6 > .image:before {
+			/* .tiles article.style6 > .image:before {
 				background-color: #8499e7;
-			}
+			} */
 
-			body:not(.is-touch) .tiles article:hover > .image {
+			/* body:not(.is-touch) .tiles article:hover > .image {
 				-moz-transform: scale(1.1);
 				-webkit-transform: scale(1.1);
 				-ms-transform: scale(1.1);
@@ -2748,7 +2755,7 @@ input, select, textarea {
 			body:not(.is-touch) .tiles article:hover .content {
 				max-height: 15em;
 				opacity: 1;
-			}
+			} */
 
 		* + .tiles {
 			margin-top: 2em;
@@ -2829,7 +2836,7 @@ input, select, textarea {
 /* Header */
 
 	#header {
-		padding: 8em 0 0.1em 0 ;
+		padding: 2.5em 0 0.1em 0 ;
 	}
 
 		#header .logo {
