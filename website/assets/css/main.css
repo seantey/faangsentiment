@@ -99,7 +99,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: #ffffff;
+		background: #212121;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -116,7 +116,7 @@ input, select, textarea {
 /* Type */
 
 	body, input, select, textarea {
-		color: #585858;
+		color: #ffffff;
 		font-family: "Source Sans Pro", Helvetica, sans-serif;
 		font-size: 16pt;
 		font-weight: 300;
@@ -2705,32 +2705,220 @@ input, select, textarea {
 						margin-bottom: 0;
 					}
 
-			/* Tiles Modified CSS */
-			.tiles article.style1 {
-				background-color: #4267B2;
-				border-radius: 4px;
+			/*** Tiles Modified Custom CSS ***/
+
+			/* Header related */
+
+
+			#title-logo-text {
+				text-align: center;
+			}
+
+			#title-logo-text a {
+				margin-left: 0;
 			}
 
 
-			.tiles article.style1 > .image:before {
-				background-color: #4267B2;
+			/* Tiles related */
+			.tiles .outer-box{ 
+				margin-left: auto;
+				margin-right: auto;
+				width: 20em;
+				height: 20em;
+
+				/* This was for rounder corners for square border */
+				/* This is overwritten further below for cirle tiles instead of square */
+				/* border-radius: 5px;  */
 			}
 
-			.tiles article.style2 > .image:before {
+			/* 
+			Change margin for bottom 2 stock box (NFLX and GOOG) for better center alignment 
+			Set a certain amount on left and right, then let the middle part be auto.
+			*/
+			@media screen and (min-width: 981px) {
+				#NFLX-box {
+					margin-left: 18%;
+				}
+
+				#GOOG-box {
+					margin-right: 18%;
+				}
+			}
+			
+			/* Tiles text */
+			/* Stock Ticker*/
+			.tiles article h1 {
+				text-align: center;
+				margin-top: 0.2em;
+				/* margin-left: 0.3em; */
+				font-size: 3em;
+				color: #ffffff;
+				margin-bottom: 0;
+			}
+
+			/* Sentiment Label Box and Text */
+			.tiles article .sentiment-box {
+				background-color: #eeeeee;
+				border-radius: 13px;
+				margin-left: auto;
+				margin-right: auto;
+				margin-top: 0em;
+				width: min-content;	
+			}
+
+			.tiles article h2 {				
+				padding-left: 0.3em;
+				text-align: center;
+				font-size: 1.8em;
+				font-family: "Arial Black", Gadget, sans-serif;
+				margin: 0;
+
+				/* Default color, JS should change it depending on sentiment label*/
+				color: #ffffff; 
+			}
+
+			.tiles article p {
+				text-align: center;
+			}
+
+			.tiles .last-updated-text {
+				margin-top: -0.7em;
+				margin-bottom: -0.7em;
+			}
+
+			.tiles .box-timestamp {
+				margin-top: 1em;
+				margin-bottom: 0em;				
+			}
+
+			.tiles .box-timestamp p {
+				margin-bottom: 0;
+			}			
+
+			/* Daily Box Section */
+			.tiles article h3 {				
+				margin-left: 0.25em;
+				margin-bottom: 0.25em;
+				text-align: center;
+				font-size: 1.3em;
+				/* font-family: "Arial Black", Gadget, sans-serif; */
+
+				/* Default color, JS should change it depending on sentiment label*/
+				color: #eeeeee; 
+			}
+
+			.tiles article .daily-box-section{
+				padding-bottom: 0.5em;
+				margin-bottom: 0.5em;
+				margin-left: auto;
+				margin-right: auto;
+				width: min-content;	
+				border-radius: 13px;
+				background-color: transparent;
+			}
+
+
+			.tiles article .seven-boxes{
+				width: 16em;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-evenly;
+			}
+			.tiles article .daily-box{
+				width: 1.8em;
+				height: 1.8em;
+				background-color: #f2849e;
+				border-radius: 50%;
+			}
+
+
+			/* Individual tiles for each FAANG stock */
+			/* #FB-box {
+				background-color: #4267B2;
+			} */
+
+			.tiles .outer-box{
+				border-radius: 50%;
+				background-color: #212121;
+				border-width: 0.3em;
+				border-style: solid;
+				border-color: #ffffff;
+			}
+
+			#FB-ticker {
+				color: #4267B2; 
+			}
+
+			/* FB Sentiment Label */
+			#FB-sentiment-color {
+				color: #1a9641; 
+			}
+
+			/* #AMZN-box {
 				background-color: #FF9900;
+			} */
+
+			#AMZN-ticker {
+				color: #FF9900; 
 			}
 
-			.tiles article.style3 > .image:before {
+			/* AMZN Sentiment Label */
+			#AMZN-sentiment-color {
+				color: #1a9641; 
+			}	
+			
+			/* #AAPL-box {
 				background-color: #555555;
-			}
+			} */
 
-			.tiles article.style4 > .image:before {
+			#AAPL-ticker {
+				color: #A3AAAE; 
+			}			
+
+			/* AAPL Sentiment Label */
+			#AAPL-sentiment-color {
+				color: #1a9641; 
+			}	
+
+			/* #NFLX-box {
 				background-color: #E50914;
+			} */
+
+			#NFLX-ticker {
+				color: #E50914; 
+			}		
+
+			/* NFLX Sentiment Label */
+			#NFLX-sentiment-color {
+				color: #d7191c; 
+			}	
+
+			/* #GOOG-box {
+				background-color: #0F9D58;
+			} */
+
+			#GOOG-ticker{
+				letter-spacing: -0.11em;
 			}
 
-			.tiles article.style5 > .image:before {
-				background-color: #0F9D58;
+			#GOOG-ticker mark.GOOG-1 {
+				color: #4285F4; 
 			}
+			#GOOG-ticker mark.GOOG-2 {
+				color: #DB4437; 
+			}
+			#GOOG-ticker mark.GOOG-3{
+				color: #F4B400; 
+			}
+			#GOOG-ticker mark.GOOG-4{
+				color: #0F9D58; 
+			}
+			
+			/* GOOG Sentiment Label */
+			#GOOG-sentiment-color {
+				color: #1a9641; 
+			}				
+
 
 			/* .tiles article.style6 > .image:before {
 				background-color: #8499e7;
@@ -2820,7 +3008,7 @@ input, select, textarea {
 
 		}
 
-		@media screen and (max-width: 480px) {
+		@media screen and (max-width: 650px) {
 
 			.tiles {
 				margin: 0;
