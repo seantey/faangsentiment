@@ -18,9 +18,9 @@
 
 				<!-- Header -->
 					<header id="header">
-						<div class="inner" id="title-logo-text">
+						<div class="inner" id="title-logo-div">
 							<!-- Logo -->
-								<a href="index.html" class="logo">
+								<a href="index.html" class="logo"  id="title-logo-text">
 									<span class="symbol"><img src="images/logo.svg" alt="" /></span><span class="title">FAANG Stock Sentiment</span>
 								</a>
 
@@ -51,14 +51,11 @@
 						<div class="inner">
 							<section class="tiles">
 								<article class="style1 outer-box" id="FB-box">
-									<h1 id="FB-ticker">FB</h1>
+									<h1 class="ticker-symbol" id="FB-ticker">FB</h1>
 									<div class="sentiment-box">
 										<h2 id="FB-sentiment-color">POSITIVE</h2>
 									</div>
-									<div class="box-timestamp">
-										<p class="last-updated-text">Last updated:</p>
-										<p id="FB-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
-									</div>
+
 									<div class="daily-box-section">
 										<h3>Past 7 Days:</h3>
 										<div class="seven-boxes">
@@ -72,18 +69,20 @@
 										</div>
 									</div>
 
+									<div class="box-timestamp">
+										<p class="last-updated-text">Last updated:</p>
+										<p id="FB-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
+									</div>
+
 									<a href="generic.html"></a>
 								</article>
 
 								<article class="style2 outer-box" id="AMZN-box">
-									<h1 id="AMZN-ticker">AMZN</h1>
+									<h1 class="ticker-symbol" id="AMZN-ticker">AMZN</h1>
 									<div class="sentiment-box">
 										<h2 id="AMZN-sentiment-color">POSITIVE</h2>
 									</div>
-									<div class="box-timestamp">
-										<p class="last-updated-text">Last updated:</p>
-										<p id="AMZN-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
-									</div>
+
 									<div class="daily-box-section">
 										<h3>Past 7 Days:</h3>
 										<div class="seven-boxes">
@@ -96,19 +95,21 @@
 											<div id="AMZN-box-7" class="daily-box"></div>
 										</div>
 									</div>
-									<a href="generic.html">
-									</a>
+
+									<div class="box-timestamp">
+										<p class="last-updated-text">Last updated:</p>
+										<p id="AMZN-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
+									</div>
+
+									<a href="generic.html"></a>
 								</article>
 
 								<article class="style3 outer-box" id="AAPL-box">
-									<h1 id="AAPL-ticker">AAPL</h1>
+									<h1 class="ticker-symbol" id="AAPL-ticker">AAPL</h1>
 									<div class="sentiment-box">
-										<h2 id="AAPL-sentiment-color">POSITIVE</h2>
+										<h2 id="AAPL-sentiment-color">UNCERTAIN</h2>
 									</div>
-									<div class="box-timestamp">
-										<p class="last-updated-text">Last updated:</p>
-										<p id="AAPL-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
-									</div>
+
 									<div class="daily-box-section">
 										<h3>Past 7 Days:</h3>
 										<div class="seven-boxes">
@@ -121,18 +122,21 @@
 											<div id="AAPL-box-7" class="daily-box"></div>
 										</div>
 									</div>
+
+									<div class="box-timestamp">
+										<p class="last-updated-text">Last updated:</p>
+										<p id="AAPL-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
+									</div>
+
 									<a href="generic.html"></a>
 								</article>
 
 								<article class="style4 outer-box" id="NFLX-box">
-									<h1 id="NFLX-ticker">NFLX</h1>
+									<h1 class="ticker-symbol" id="NFLX-ticker">NFLX</h1>
 									<div class="sentiment-box">
 										<h2 id="NFLX-sentiment-color">NEGATIVE</h2>
 									</div>
-									<div class="box-timestamp">
-										<p class="last-updated-text">Last updated:</p>
-										<p id="NFLX-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
-									</div>
+
 									<div class="daily-box-section">
 										<h3>Past 7 Days:</h3>
 										<div class="seven-boxes">
@@ -145,11 +149,17 @@
 											<div id="NFLX-box-7" class="daily-box"></div>
 										</div>
 									</div>
+
+									<div class="box-timestamp">
+										<p class="last-updated-text">Last updated:</p>
+										<p id="NFLX-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
+									</div>
+
 									<a href="generic.html"></a>
 								</article>
 
 								<article class="style5 outer-box" id="GOOG-box">
-									<h1 id="GOOG-ticker">
+									<h1 class="ticker-symbol" id="GOOG-ticker">
 										<mark class="GOOG-1">G</mark>
 										<mark class="GOOG-2">O</mark>
 										<mark class="GOOG-3">O</mark>
@@ -158,10 +168,7 @@
 									<div class="sentiment-box">
 										<h2 id="GOOG-sentiment-color">POSITIVE</h2>
 									</div>
-									<div class="box-timestamp">
-										<p class="last-updated-text">Last updated:</p>
-										<p id="GOOG-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
-									</div>
+
 									<div class="daily-box-section">
 										<h3>Past 7 Days:</h3>
 										<div class="seven-boxes">
@@ -174,6 +181,12 @@
 											<div id="GOOG-box-7" class="daily-box"></div>
 										</div>
 									</div>
+
+									<div class="box-timestamp">
+										<p class="last-updated-text">Last updated:</p>
+										<p id="GOOG-timestamp" class="timestamp">1/1/1970 12:00PM EST</p>
+									</div>
+
 									<a href="generic.html"></a>
 								</article>
 							</section>

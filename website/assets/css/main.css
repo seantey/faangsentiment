@@ -2708,14 +2708,12 @@ input, select, textarea {
 			/*** Tiles Modified Custom CSS ***/
 
 			/* Header related */
-
-
-			#title-logo-text {
+			#title-logo-div {
 				text-align: center;
 			}
 
-			#title-logo-text a {
-				margin-left: 0;
+			#title-logo-text {
+				margin-left: -2em !important;
 			}
 
 
@@ -2723,8 +2721,8 @@ input, select, textarea {
 			.tiles .outer-box{ 
 				margin-left: auto;
 				margin-right: auto;
-				width: 20em;
-				height: 20em;
+				width: 17em;
+				height: 17em;
 
 				/* This was for rounder corners for square border */
 				/* This is overwritten further below for cirle tiles instead of square */
@@ -2737,23 +2735,24 @@ input, select, textarea {
 			*/
 			@media screen and (min-width: 981px) {
 				#NFLX-box {
-					margin-left: 18%;
+					margin-left: 20%;
 				}
 
 				#GOOG-box {
-					margin-right: 18%;
+					margin-right: 20%;
 				}
 			}
 			
 			/* Tiles text */
 			/* Stock Ticker*/
-			.tiles article h1 {
+
+			.tiles .ticker-symbol {
 				text-align: center;
 				margin-top: 0.2em;
 				/* margin-left: 0.3em; */
 				font-size: 3em;
 				color: #ffffff;
-				margin-bottom: 0;
+				margin-bottom: 0;				
 			}
 
 			/* Sentiment Label Box and Text */
@@ -2769,7 +2768,7 @@ input, select, textarea {
 			.tiles article h2 {				
 				padding-left: 0.3em;
 				text-align: center;
-				font-size: 1.8em;
+				font-size: 1.38em;
 				font-family: "Arial Black", Gadget, sans-serif;
 				margin: 0;
 
@@ -2779,6 +2778,8 @@ input, select, textarea {
 
 			.tiles article p {
 				text-align: center;
+				font-size: 0.9em;
+				font-weight: 588;
 			}
 
 			.tiles .last-updated-text {
@@ -2800,7 +2801,7 @@ input, select, textarea {
 				margin-left: 0.25em;
 				margin-bottom: 0.25em;
 				text-align: center;
-				font-size: 1.3em;
+				font-size: 1em;
 				/* font-family: "Arial Black", Gadget, sans-serif; */
 
 				/* Default color, JS should change it depending on sentiment label*/
@@ -2809,6 +2810,7 @@ input, select, textarea {
 
 			.tiles article .daily-box-section{
 				padding-bottom: 0.5em;
+				margin-top: 0.5em;
 				margin-bottom: 0.5em;
 				margin-left: auto;
 				margin-right: auto;
@@ -2817,9 +2819,8 @@ input, select, textarea {
 				background-color: transparent;
 			}
 
-
 			.tiles article .seven-boxes{
-				width: 16em;
+				width: 15em;
 				display: flex;
 				flex-direction: row;
 				justify-content: space-evenly;
@@ -2877,7 +2878,7 @@ input, select, textarea {
 
 			/* AAPL Sentiment Label */
 			#AAPL-sentiment-color {
-				color: #1a9641; 
+				color: #607d8b; 
 			}	
 
 			/* #NFLX-box {
