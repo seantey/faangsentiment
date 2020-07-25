@@ -6,10 +6,13 @@ from boto3.dynamodb.conditions import Key
 
 # Spark functions used in main()
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf
 from pyspark.sql.types import *
+from pyspark.sql.functions import udf
+from pyspark.sql.functions import col
 from pyspark.sql.functions import when, floor as spark_floor
 from pyspark.sql.functions import sum as spark_sum
+from pyspark.sql.functions import max as spark_max
+from pyspark.sql import Window
 
 # Sentiment Analysis Pipeline
 from bs4 import BeautifulSoup
@@ -45,17 +48,25 @@ def main(args):
     news_data = dynamo.read_table(table_name=table_name,
                                   target_analysis_window=analysis_window)
 
+    # TODO use logger
+    print('@@@Loaded DynamoDB table')
+
     ### 2. Start Spark session if it does not exists
 
     # If this was running on AWS EMR, the spark context would be
     # initiated automatically.
-    if not spark:
+    try:
+        spark
+    except NameError:
         spark = (SparkSession.builder
                             .appName("SparkTest") # Set app name
                             .master("local[2]") # Run locally with 2 cores
                             .config("spark.driver.memory", "4g")
                             .config("spark.executor.memory", "3g")
                             .getOrCreate())
+
+    # TODO use logger
+    print('@@@Started Spark Session')
 
     ### 3. Parallelize the data to Spark Nodes
 
@@ -67,6 +78,9 @@ def main(args):
 
     ### 4. Process the data from raw text to final sentiment score and label
 
+    # TODO use logger
+    print('@@@ Initializing Sentiment UDF')
+
     # Add Sentiment Analysis Pipeline as a UDF to spark
     s_pipe = SentimentAnalysisPipeline()
 
@@ -77,12 +91,18 @@ def main(args):
 
     s_pipe_udf = udf(s_pipe.raw_text_to_sentiment, udf_schema)
 
+    # TODO use logger
+    print('@@@ Defining transformations')
+
     # Start defining spark transformations, note that these
     # transformations are lazily evaluated so they are executed
     # only at the end when an action is triggered.
 
     # Run all news titles through the sentiment pipeline
     # TODO switch to full article analysis with summarizer later on.
+    # Drop nulls, most likely there won't be any for titles
+    title_df = news_df.select('analysis_window', 't_symb', 'news_timestamp', 'news_title').na.drop()
+
     sentiment_df = title_df.withColumn('sentiment', s_pipe_udf(title_df['news_title']))
 
     # Subset columns
@@ -215,22 +235,21 @@ def main(args):
     # scale: the number of digits on right side of dot. (default: 0)
     sentiment_df = sentiment_df.withColumn('final_score', sentiment_df.final_score.cast(DecimalType(precision=10, scale=8)))
 
+    # TODO use logger
+    print('@@@ Executing Transformations')
+
     # Execute transformations and collect final dataframe in Driver
     results = sentiment_df.collect()
 
-    results_dict = [row.asDict() for row in results]
-
-    results_table = dynamodb.Table(results_table)
+    results_dict_list = [row.asDict() for row in results]
 
     # TODO lots of error catches and logging needed!
+    # TODO use logger
+    print('Writing results to DynamoDB')
+    dynamo.write_table(table_name=results_table, data_dict_list=results_dict_list)
 
-    # Use batch writer to automatically handle buffering and sending items in batches
-    # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/dynamodb.html
-    with results_table.batch_writer() as batch:
-        for rd in results_dict:
-            batch.put_item(
-                Item=rd
-            )
+    # TODO use logger
+    print('@@@ DONE!')
 
 
 class DynamoDBHelper:
@@ -249,8 +268,16 @@ class DynamoDBHelper:
 
         return news_data
 
-    def write_table():
-        pass
+    def write_table(self, table_name, data_dict_list):
+
+        results_table = self.dynamodb_conn.Table(table_name)
+        # Use batch writer to automatically handle buffering and sending items in batches
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/dynamodb.html
+        with results_table.batch_writer() as batch:
+            for data_row in data_dict_list:
+                batch.put_item(
+                    Item=data_row
+                )
 
 
 # class SparkHelper():
