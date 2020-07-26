@@ -2705,7 +2705,9 @@ input, select, textarea {
 						margin-bottom: 0;
 					}
 
-			/*** Tiles Modified Custom CSS ***/
+			/*******************************
+			 ****** Custom CSS Section *****
+			********************************/
 
 			/* Header related */
 			#title-logo-div {
@@ -2713,7 +2715,7 @@ input, select, textarea {
 			}
 
 			#title-logo-text {
-				margin-left: -2em !important;
+				margin-left: -3em !important;
 			}
 
 
@@ -2721,10 +2723,10 @@ input, select, textarea {
 			.tiles .outer-box{ 
 				margin-left: auto;
 				margin-right: auto;
-				width: 17em;
-				height: 17em;
+				width: 19em;
+				height: 19em;
 
-				/* This was for rounder corners for square border */
+				/* This code below was for rounder corners for square border */
 				/* This is overwritten further below for cirle tiles instead of square */
 				/* border-radius: 5px;  */
 			}
@@ -2735,11 +2737,13 @@ input, select, textarea {
 			*/
 			@media screen and (min-width: 981px) {
 				#NFLX-box {
-					margin-left: 20%;
+					margin-top: 1em;
+					margin-left: 18%;
 				}
 
 				#GOOG-box {
-					margin-right: 20%;
+					margin-top: 1em;
+					margin-right: 18%;
 				}
 			}
 			
@@ -2748,7 +2752,7 @@ input, select, textarea {
 
 			.tiles .ticker-symbol {
 				text-align: center;
-				margin-top: 0.2em;
+				margin-top: 0.35em;
 				/* margin-left: 0.3em; */
 				font-size: 3em;
 				color: #ffffff;
@@ -2788,7 +2792,7 @@ input, select, textarea {
 			}
 
 			.tiles .box-timestamp {
-				margin-top: 1em;
+				margin-top: 1.5em;
 				margin-bottom: 0em;				
 			}
 
@@ -2796,7 +2800,8 @@ input, select, textarea {
 				margin-bottom: 0;
 			}			
 
-			/* Daily Box Section */
+			/*** Daily Box Section ***/
+			/* Past 7 days text: */
 			.tiles article h3 {				
 				margin-left: 0.25em;
 				margin-bottom: 0.25em;
@@ -2810,8 +2815,8 @@ input, select, textarea {
 
 			.tiles article .daily-box-section{
 				padding-bottom: 0.5em;
-				margin-top: 0.5em;
-				margin-bottom: 0.5em;
+				margin-top: 0.8em;
+				margin-bottom: 0.8em;
 				margin-left: auto;
 				margin-right: auto;
 				width: min-content;	
@@ -2820,16 +2825,23 @@ input, select, textarea {
 			}
 
 			.tiles article .seven-boxes{
-				width: 15em;
+				width: 18em;
 				display: flex;
 				flex-direction: row;
 				justify-content: space-evenly;
 			}
 			.tiles article .daily-box{
-				width: 1.8em;
-				height: 1.8em;
+				width: 2.3em;
+				height: 2.3em;
 				background-color: #f2849e;
 				border-radius: 50%;
+			}
+
+			.tiles article .daily-box p {
+				font-size: 0.85em;
+				margin-bottom: 0em;
+				margin-top: 0.38em;
+				text-align: center;
 			}
 
 
@@ -2854,6 +2866,36 @@ input, select, textarea {
 			#FB-sentiment-color {
 				color: #1a9641; 
 			}
+
+			#FB-box-1 {
+				background-color: #1a9641;
+			}
+
+			#FB-box-2 {
+				background-color: #d7191c;
+			}
+
+			#FB-box-3 {
+				background-color: #607d8b;
+			}
+
+			#FB-box-4 {
+				background-color: #1a9641;
+			}
+
+			#FB-box-5 {
+				background-color: #d7191c;
+			}
+
+			#FB-box-6 {
+				background-color: #607d8b;
+			}
+
+			#FB-box-7 {
+				background-color: #1a9641;
+			}
+
+
 
 			/* #AMZN-box {
 				background-color: #FF9900;
