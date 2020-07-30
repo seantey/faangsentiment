@@ -1,0 +1,8 @@
+
+# Command to sync website files
+aws s3 sync /website/ s3://faangsentiment.app
+
+# We need to invalidate the cache afterwards because the files are server through cloudfront.
+# Invalidating with a wildcard is not a great idea, only do it when necessary.
+# Each invalidation costs: $0.005 per path requested for invalidation as of July 2020
+aws cloudfront create-invalidation --distribution-id <DistributionID> --paths "/*"

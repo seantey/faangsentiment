@@ -1,0 +1,5 @@
+1. Make sure EMR_EC2 Role has DynamoDB Access to read and write data.
+
+2. EMR Configuration JSON notes:
+    * "maximizeResourceAllocation" set to "true" automatically defines best configuration for EMR cluster however there are some slight caveats that can be further improved on.
+    * Details of possible improvements: https://stackoverflow.com/questions/34003759/

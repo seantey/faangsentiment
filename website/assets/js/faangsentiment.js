@@ -1,4 +1,8 @@
-$.getJSON("data/test_7_days.json", function(sentiment_data) {
+$.getJSON("https://ujtuh6xr91.execute-api.us-west-2.amazonaws.com/latest_results", function(sentiment_data) {
+// Original test version loads the json from local directory or S3 local path
+// New version loads the JSON from AWS API Gateway directly.
+// $.getJSON("data/test_7_days.json", function(sentiment_data) {
+    
     console.log(sentiment_data)
 
     const array = ["FB", "AMZN", "AAPL", "NFLX", "GOOG"]

@@ -23,50 +23,83 @@ from multiprocessing import Pool
 
 def main(args):
     """
-    Main Function for Spark Submit Script which does the following steps:
+    Main function when used as standalone spark-submit script
+    """
+
+    # TODO write parse args code:
+    # add named args processing like --test 
+    # check whether it's possible to have named args compatible
+    # with running spark-submit command
+    # e.g. $ spark-submit spark-script.py 2020-07-25_Hour=00
+    # or $ spark-submit spark-script.py --test
+    # or throw error when no analysis window given
+    test_mode = True
+    print(f'@@@@@@@ Arguments: {args}')
+
+    # TODO remove quotes around args
+
+    if test_mode:
+        data_table = 'test_data'
+        results_table = 'test_results'
+
+        # TODO probably not a good idea to hard code this, even for a test.
+        if len(args) == 0:
+            analysis_window = '2020-07-25_Hour=00'
+        else:
+            analysis_window = args[0]
+
+    else:
+        data_table = 'news_data'
+        results_table = 'news_results'
+        analysis_window = args[0]
+
+    process_analysis_window(analysis_window, data_table, results_table)
+
+
+def process_analysis_window(analysis_window, data_table, results_table):
+    """
+    Process a given analysis window using Spark for the following steps:
+
     1. Load the news aticle data from DynamoDB
     2. Start a Spark session if it does not exists
     3. Parallelize the data to Spark Nodes
     4. Process the data from raw text to final sentiment score and label
-    5. Store the results into DynamoDB
+    5. Store the results into DynamoDB    
     """
-    # TODO maybe parse args for this.
-    test_mode = True
-
     ### 1. Load the news aticle data from DynamoDB
     dynamo = DynamoDBHelper()
 
-    if test_mode:
-        table_name = 'test_data'
-        results_table = 'test_results'
-        analysis_window = '2020-07-15_Hour=17'
-    else:
-        table_name = 'news_data'
-        results_table = 'news_results'
-        analysis_window = args[0]
-
-    news_data = dynamo.read_table(table_name=table_name,
+    news_data = dynamo.read_table(table_name=data_table,
                                   target_analysis_window=analysis_window)
 
     # TODO use logger
     print('@@@Loaded DynamoDB table')
 
-    ### 2. Start Spark session if it does not exists
+    ### 2. Start Spark session
 
-    # If this was running on AWS EMR, the spark context would be
-    # initiated automatically.
-    try:
-        spark
-    except NameError:
-        spark = (SparkSession.builder
-                            .appName("SparkTest") # Set app name
-                            .master("local[2]") # Run locally with 2 cores
-                            .config("spark.driver.memory", "4g")
-                            .config("spark.executor.memory", "3g")
-                            .getOrCreate())
+    # TODO maybe move this to main and make the spark context an argument
+    # to this function, that way the spark context can be initialized
+    # based on commandline arguments such as --local_test
+    # if local_test == True:
+    #     spark = (SparkSession.builder
+    #                         .appName("SparkTest") # Set app name
+    #                         .master("local[2]") # Run locally with 2 cores
+    #                         .config("spark.driver.memory", "4g")
+    #                         .config("spark.executor.memory", "3g")
+    #                         .getOrCreate())
+
+    spark = (SparkSession.builder
+                        .appName("SparkTest")  # Set app name
+                        .getOrCreate())
+
+    print('@@@ THIS MAY FAIL')
+    print(spark)
 
     # TODO use logger
     print('@@@Started Spark Session')
+    print('@@@ Configurations @@@')
+    print(spark.sparkContext._conf.getAll())
+
 
     ### 3. Parallelize the data to Spark Nodes
 
@@ -101,12 +134,12 @@ def main(args):
     # Run all news titles through the sentiment pipeline
     # TODO switch to full article analysis with summarizer later on.
     # Drop nulls, most likely there won't be any for titles
-    title_df = news_df.select('analysis_window', 't_symb', 'news_timestamp', 'news_title').na.drop()
+    title_df = news_df.select('analysis_window', 'analysis_date', 't_symb', 'news_timestamp', 'news_title').na.drop()
 
     sentiment_df = title_df.withColumn('sentiment', s_pipe_udf(title_df['news_title']))
 
     # Subset columns
-    sentiment_df = sentiment_df.select('analysis_window', 't_symb', 'news_timestamp',
+    sentiment_df = sentiment_df.select('analysis_window', 'analysis_date', 't_symb', 'news_timestamp',
                                     'news_title', 'sentiment.label', 'sentiment.score')
 
     ## Final Label Calculation:
@@ -116,8 +149,8 @@ def main(args):
 
     # Criteria for final score:
     # * The final score should be between -1 and 1.
-    # * The older news, the less important it is, scores are weighed exponentially 
-    # less every 3 hours from the most recent news. 
+    # * The older news, the less important it is, scores are weighed exponentially
+    # less every 3 hours from the most recent news.
     # * E.g. Most recent news have a weight of 1 and news that are 3 hours away from
     # the MAX timestamp have a weight of 0.5, 6 hour away from MAX timestamp has weight of 0.25 and so on.
     # * Any score between -0.7 and 0.7 (exclusive) is labelled UNCERTAIN
@@ -127,12 +160,12 @@ def main(args):
     ## Scores are bounded between -1 and 1
     # If the label is NEGATIVE, make the score value negative.
     # TODO make this line a little more nicer to read.
-    sentiment_df = sentiment_df.withColumn('score', 
+    sentiment_df = sentiment_df.withColumn('score',
                                             (when(sentiment_df.label == 'NEGATIVE', -sentiment_df.score)
                                             .otherwise(sentiment_df.score)))
 
     ## Old news weigh less
-    # The older the news, the less important it is, scores are weighted 
+    # The older the news, the less important it is, scores are weighted
     # exponentially less every 3 hours from the most recent timestamp in the analysis window.
 
     # Calculate weight factor
@@ -154,7 +187,7 @@ def main(args):
     # https://stackoverflow.com/questions/49241264/
     # https://stackoverflow.com/questions/62863632/
 
-    column_list = ['analysis_window', 't_symb']
+    column_list = ['analysis_window', 'analysis_date', 't_symb']
     window_spec = Window.partitionBy([col(x) for x in column_list])
     sentiment_df = sentiment_df.withColumn('max_timestamp', spark_max(col('news_timestamp')).over(window_spec))
 
@@ -202,7 +235,7 @@ def main(args):
     # for either positive or negative.
 
     # Get sum of weights and sum of weighted scores
-    sentiment_df = (sentiment_df.groupBy('analysis_window', 't_symb')
+    sentiment_df = (sentiment_df.groupBy('analysis_window', 'analysis_date', 't_symb')
                                 .agg(spark_sum('weighted_score').alias('sum_scores'),
                                     spark_sum('score_weight').alias('sum_weights'))
                 )
@@ -216,7 +249,7 @@ def main(args):
                     )
 
     # Keep only entries that we need for the website
-    sentiment_df = sentiment_df.select('analysis_window', 't_symb', 'label', 'final_score')
+    sentiment_df = sentiment_df.select('analysis_window', 'analysis_date', 't_symb', 'label', 'final_score')
 
     # Cast float to Decimal
     # precision: the maximum total number of digits (default: 10)
@@ -228,12 +261,21 @@ def main(args):
 
     # Keep only entries that we need for the website
     # TODO add timestamp EST string
-    sentiment_df = sentiment_df.select('analysis_window', 't_symb', 'label', 'final_score')
+    sentiment_df = sentiment_df.select('analysis_window', 'analysis_date', 't_symb', 'label', 'final_score')
 
     # Cast float to Decimal
     # precision: the maximum total number of digits (default: 10)
     # scale: the number of digits on right side of dot. (default: 0)
     sentiment_df = sentiment_df.withColumn('final_score', sentiment_df.final_score.cast(DecimalType(precision=10, scale=8)))
+
+    # Add the most recent API success timestamp for each stock, to be used for
+    # "Last Updated at:" entry on the website because we want to reflect that the sentiments
+    # are based on the time the data was pulled not the time the analysis pipeline finished.
+    timestamp_groupby = news_df.select('analysis_window', 'analysis_date','t_symb','api_success_e_str').groupBy('analysis_window', 'analysis_date','t_symb')
+    max_timestamp_df = timestamp_groupby.agg(spark_max('api_success_e_str').alias('api_success_e_str'))
+
+    join_on_list = ["analysis_window","t_symb"]
+    sentiment_df = sentiment_df.join(max_timestamp_df, join_on_list, "inner")
 
     # TODO use logger
     print('@@@ Executing Transformations')
@@ -254,7 +296,7 @@ def main(args):
 
 class DynamoDBHelper:
     def __init__(self):
-        self.dynamodb_conn = boto3.resource('dynamodb')
+        self.dynamodb_conn = boto3.resource('dynamodb', region_name='us-west-2')
 
     def read_table(self, table_name, target_analysis_window):
         table = self.dynamodb_conn.Table(table_name)
@@ -278,6 +320,21 @@ class DynamoDBHelper:
                 batch.put_item(
                     Item=data_row
                 )
+
+    def write_item(self, table_name, item):
+        target_table = self.dynamodb_conn.Table(table_name)
+        response = target_table.put_item(Item=item)
+        response_code = response['ResponseMetadata']['HTTPStatusCode']
+
+
+def put_news_data(news_data: dict, table_name: str='test_data') -> dict:
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(table_name)
+    response = table.put_item(Item=news_data)
+    
+    return response
+
 
 
 # class SparkHelper():
