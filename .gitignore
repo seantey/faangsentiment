@@ -1,2 +1,3 @@
 notebooks/env/faangs_venv/
-notebooks/spark_related/.ipynb_checkpoints/
+**/.ipynb_checkpoints
+.ipynb_checkpoints
