@@ -2723,8 +2723,8 @@ input, select, textarea {
 			.tiles .outer-box{ 
 				margin-left: auto;
 				margin-right: auto;
-				width: 19em;
-				height: 19em;
+				width: 20em;
+				height: 20em;
 
 				/* This code below was for rounder corners for square border */
 				/* This is overwritten further below for cirle tiles instead of square */
@@ -2752,11 +2752,20 @@ input, select, textarea {
 
 			.tiles .ticker-symbol {
 				text-align: center;
-				margin-top: 0.35em;
+				margin-top: 0.38em;
 				/* margin-left: 0.3em; */
 				font-size: 3em;
 				color: #ffffff;
 				margin-bottom: 0;				
+			}
+
+			/* Current hour text above sentiment label */
+			.tiles article .current-hour {
+				text-align: center;
+				font-size: 0.9em;
+				margin-top: -0.2em;
+				margin-bottom: 0.2em;
+				margin-left: 0.38em;
 			}
 
 			/* Sentiment Label Box and Text */
@@ -2804,7 +2813,7 @@ input, select, textarea {
 			/* Past 7 days text: */
 			.tiles article h3 {				
 				margin-left: 0.25em;
-				margin-bottom: 0.25em;
+				margin-bottom: 0.08em;
 				text-align: center;
 				font-size: 1em;
 				/* font-family: "Arial Black", Gadget, sans-serif; */
@@ -2825,14 +2834,14 @@ input, select, textarea {
 			}
 
 			.tiles article .seven-boxes{
-				width: 18em;
+				width: 19em;
 				display: flex;
 				flex-direction: row;
 				justify-content: space-evenly;
 			}
 			.tiles article .daily-box{
-				width: 2.3em;
-				height: 2.3em;
+				width: 2.33em;
+				height: 2.33em;
 				background-color: #f2849e;
 				border-radius: 50%;
 			}
@@ -2840,7 +2849,7 @@ input, select, textarea {
 			.tiles article .daily-box p {
 				font-size: 0.85em;
 				margin-bottom: 0em;
-				margin-top: 0.38em;
+				margin-top: 0.5em;
 				text-align: center;
 			}
 
@@ -2941,7 +2950,7 @@ input, select, textarea {
 			} */
 
 			#GOOG-ticker{
-				letter-spacing: -0.11em;
+				letter-spacing: -0.145em;
 			}
 
 			#GOOG-ticker mark.GOOG-1 {

@@ -1,6 +1,7 @@
+// Load JSON from AWS API Gateway which triggers a lambda function that fetches from DynamoDB
 $.getJSON("https://ujtuh6xr91.execute-api.us-west-2.amazonaws.com/latest_results", function(sentiment_data) {
-// Original test version loads the json from local directory or S3 local path
-// New version loads the JSON from AWS API Gateway directly.
+
+// Alternatively, load local data. Switch to this getJSON when debugging locally.
 // $.getJSON("data/test_7_days.json", function(sentiment_data) {
     
     console.log(sentiment_data)
