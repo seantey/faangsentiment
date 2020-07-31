@@ -42,6 +42,12 @@ sudo docker pull puckel/docker-airflow
 
 git clone https://github.com/puckel/docker-airflow.git
 
+# Fetch a copy of my repo to access the dag files.
+git clone https://github.com/seantey/faangsentiment.git
+
+# Copy dags to docker-airflow dag folder which is mapped into the container due to settings in compose yml.
+cp -r faangsentiment/scripts/airflow/dags/ docker-airflow/dags/
+
 cd docker-airflow/
 
 # This will start the airflow server and the postgres server (airflow metadata)
