@@ -57,7 +57,7 @@ cd docker-airflow/
 cp faangsentiment/scripts/airflow/requirements.txt docker-airflow/requirements.txt
 
 # Add a statement to the docker compose file to ensure that the requirements file is mounted
-sed -i '/volumes:/a \           - ./requirements.txt:/requirements.txt' docker-airflow/docker-compose-LocalExecutor.yml
+sed -i '/volumes:/a \            - ./requirements.txt:/requirements.txt' docker-airflow/docker-compose-LocalExecutor.yml
 
 # This will start the airflow server and the postgres server (airflow metadata)
 sudo docker-compose -f docker-compose-LocalExecutor.yml up -d
