@@ -1,6 +1,9 @@
+#!/bin/bash
+
 # Prepare for Docker installation.
 # https://docs.docker.com/engine/install/ubuntu/
 sudo apt update -y
+sudo apt upgrade -y
 
 # Update the apt package index and install packages to allow apt to use a repository over HTTPS
 sudo apt-get install -y \
@@ -27,9 +30,9 @@ sudo add-apt-repository \
 sudo apt-get update -y
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-# Install Docker Compose
+# Install Docker Compose, might want to change version 1.26.2 to newer versions in the future
 sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-
+sudo chmod +x /usr/local/bin/docker-compose
 
 # Run Airflow using the docker-airflow image to avoid seting up the varios components needed to run airflow.
 # https://github.com/puckel/docker-airflow
@@ -49,6 +52,12 @@ git clone https://github.com/seantey/faangsentiment.git
 cp -r faangsentiment/scripts/airflow/dags/* docker-airflow/dags/
 
 cd docker-airflow/
+
+# Add requirements txt to docker-airflow folder
+cp faangsentiment/scripts/airflow/requirements.txt docker-airflow/requirements.txt
+
+# Add a statement to the docker compose file to ensure that the requirements file is mounted
+sed -i '/volumes:/a \           - ./requirements.txt:/requirements.txt' docker-airflow/docker-compose-LocalExecutor.yml
 
 # This will start the airflow server and the postgres server (airflow metadata)
 sudo docker-compose -f docker-compose-LocalExecutor.yml up -d
