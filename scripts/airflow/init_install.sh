@@ -46,7 +46,7 @@ git clone https://github.com/puckel/docker-airflow.git
 git clone https://github.com/seantey/faangsentiment.git
 
 # Copy dags to docker-airflow dag folder which is mapped into the container due to settings in compose yml.
-cp -r faangsentiment/scripts/airflow/dags/ docker-airflow/dags/
+cp -r faangsentiment/scripts/airflow/dags/* docker-airflow/dags/
 
 cd docker-airflow/
 
