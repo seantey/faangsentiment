@@ -3,4 +3,4 @@ Live FAANG Stock Sentiment Tracker
 
 WIP
 
-Link: [https:faangsentiment.app](https:faangsentiment.app)
+Link: [https://faangsentiment.app]
