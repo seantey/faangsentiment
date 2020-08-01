@@ -16,8 +16,8 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 2,
-    'retry_delay': timedelta(seconds=15),
-    'execution_timeout': timedelta(minutes=30)
+    'retry_delay': timedelta(seconds=30),
+    'execution_timeout': timedelta(minutes=2)
     # 'queue': 'bash_queue',
     # 'pool': 'backfill',
     # 'priority_weight': 10,
@@ -50,7 +50,7 @@ def basic_lambda_test():
 with DAG('lambda_test',
          default_args=default_args,
          description='Simple lambda hook test DAG',
-         schedule_interval=timedelta(minutes=1)
+         schedule_interval='*/2 * * * *'
          ) as dag:
 
     dummy_start_task = DummyOperator(
