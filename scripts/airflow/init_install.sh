@@ -60,7 +60,7 @@ cp faangsentiment/scripts/airflow/requirements.txt docker-airflow/requirements.t
 sed -i '/volumes:/a \            - ./requirements.txt:/requirements.txt' docker-airflow/docker-compose-LocalExecutor.yml
 
 # This will start the airflow server and the postgres server (airflow metadata)
-sudo docker-compose -f docker-compose-LocalExecutor.yml up -d
+sudo docker-compose -f docker-airflow/docker-compose-LocalExecutor.yml up -d
 
 # On your local machine, you might want to set up a SSH tunnel to map the Airflow Server UI to localhost.
 # https://stackoverflow.com/questions/46090750/how-to-setup-ssh-tunneling-in-aws

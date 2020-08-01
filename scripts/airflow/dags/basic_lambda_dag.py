@@ -50,16 +50,18 @@ def basic_lambda_test():
 with DAG('lambda_test',
          default_args=default_args,
          description='Simple lambda hook test DAG',
-         schedule_interval='*/2 * * * *'
+         schedule_interval=timedelta(minutes=3)
          ) as dag:
 
     dummy_start_task = DummyOperator(
         task_id='dummy_start'
+        dag=dag
     )
 
     lambda_test = PythonOperator(
         task_id='lambda_test',
         python_callable=basic_lambda_test
+        dag=dag
     )
 
     dummy_start_task >> lambda_test
