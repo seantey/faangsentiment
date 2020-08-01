@@ -47,21 +47,21 @@ def basic_lambda_test():
 # Initialize DAG
 # Modification of example from:
 # https://www.sicara.ai/blog/2019-01-28-automate-aws-tasks-thanks-to-airflow-hooks
-with DAG('lambda_test',
+dag = DAG('lambda_test',
          default_args=default_args,
          description='Simple lambda hook test DAG',
          schedule_interval=timedelta(minutes=3)
-         ) as dag:
+         )
 
-    dummy_start_task = DummyOperator(
-        task_id='dummy_start'
-        dag=dag
-    )
+dummy_start_task = DummyOperator(
+    task_id='dummy_start'
+    dag=dag
+)
 
-    lambda_test = PythonOperator(
-        task_id='lambda_test',
-        python_callable=basic_lambda_test
-        dag=dag
-    )
+lambda_test = PythonOperator(
+    task_id='lambda_test',
+    python_callable=basic_lambda_test
+    dag=dag
+)
 
-    dummy_start_task >> lambda_test
+dummy_start_task >> lambda_test
