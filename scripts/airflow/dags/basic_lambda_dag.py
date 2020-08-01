@@ -54,13 +54,13 @@ dag = DAG('lambda_test',
          )
 
 dummy_start_task = DummyOperator(
-    task_id='dummy_start'
+    task_id='dummy_start',
     dag=dag
 )
 
 lambda_test = PythonOperator(
     task_id='lambda_test',
-    python_callable=basic_lambda_test
+    python_callable=basic_lambda_test,
     dag=dag
 )
 
