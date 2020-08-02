@@ -1,3 +1,4 @@
+import boto3
 from datetime import timedelta
 
 from airflow import DAG
@@ -5,10 +6,6 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
-# Just a test. TODO remove later
-from airflow.providers.amazon.aws.operators.emr_create_job_flow import EmrCreateJobFlowOperator
-
-import boto3
 
 # Default ARGS passed into all operators
 default_args = {
