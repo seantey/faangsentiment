@@ -102,7 +102,7 @@ with DAG('lambda_test',
         task_id='create_job_flow',
         aws_conn_id='aws_default',
         emr_conn_id='emr_default',
-        job_flow_overrides=default_emr_settings
+        job_flow_overrides=emr_settings
     )
 
     spark_step_config = [
