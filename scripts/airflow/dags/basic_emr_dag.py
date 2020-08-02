@@ -35,7 +35,6 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
                             "Name": "Master nodes",
                             "Market": "ON_DEMAND",
                             "InstanceRole": "MASTER",
-                            "InstanceGroupType":"MASTER",
                             "InstanceType": "m4.large",
                             "InstanceCount": 1,
                             "EbsConfiguration": {"EbsBlockDeviceConfigs":
@@ -85,7 +84,7 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
                 "ScaleDownBehavior": "TERMINATE_AT_TASK_COMPLETION",
                 "JobFlowRole": "EMR_EC2_DefaultRole",
                 "ServiceRole": "EMR_DefaultRole",
-                "AutoScalingRole": "EMR_AutoScaling_DefaultRole",
+                "AutoScalingRole": "EMR_AutoScaling_DefaultRole"
                 }
 
 
