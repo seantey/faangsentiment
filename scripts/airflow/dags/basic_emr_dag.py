@@ -124,23 +124,23 @@ with DAG('lambda_test',
         steps=spark_step_config
     )
 
-    watch_prev_step_task = EmrStepSensor(
+    watch_prev_step = EmrStepSensor(
         task_id='watch_prev_step',
         job_flow_id="{{ task_instance.xcom_pull('create_job_flow', key='return_value') }}",
         step_id="{{ task_instance.xcom_pull('add_step', key='return_value')[0] }}",
         aws_conn_id='aws_default'
     )
 
-    terminate_job_flow_task = EmrTerminateJobFlowOperator(
+    terminate_job_flow = EmrTerminateJobFlowOperator(
         task_id='terminate_job_flow',
         job_flow_id="{{ task_instance.xcom_pull('create_job_flow', key='return_value') }}",
         aws_conn_id='aws_default',
         trigger_rule="all_done"
     )
 
-    create_job_flow_task >> add_step_task
-    add_step_task >> watch_prev_step_task
-    watch_prev_step_task >> terminate_job_flow_task
+    create_job_flow >> add_step
+    add_step >> watch_prev_step
+    watch_prev_step >> terminate_job_flow
 
 # For reference, original CLI export output
 # aws emr create-cluster
