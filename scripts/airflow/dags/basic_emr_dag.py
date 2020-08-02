@@ -17,7 +17,7 @@ default_args_dag = {
     'email_on_retry': False,
     'retries': 2,
     'retry_delay': timedelta(minutes=3),
-    'execution_timeout': timedelta(minutes=2)
+    'execution_timeout': timedelta(minutes=35)
 }
 
 # Create Job Flow Config references
