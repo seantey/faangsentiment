@@ -72,7 +72,7 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
                      "Configurations": [{"Classification": "export", "Properties": {"PYSPARK_PYTHON": "/usr/bin/python3"}}]
                      },
                     {"Classification": "spark", "Properties": {"maximizeResourceAllocation": "true"}}
-                ]
+                ],
                 "BootstrapActions": [
                     {
                         'Name': 'Load PySpark Script',
