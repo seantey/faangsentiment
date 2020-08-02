@@ -1,4 +1,8 @@
 #!/bin/bash
+# Run this script on the airflow server such as an ec2 instance
+# If you are using EC2, make sure the EC2 instance has permissions such as:
+# AWSLambdaFullAccess, AmazonDynamoDBFullAccess, AmazonElasticMapReduceFullAccess
+# or something more strict than full access depending on the situation.
 cd ~
 
 # Prepare for Docker installation.
