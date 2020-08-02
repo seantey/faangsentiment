@@ -101,6 +101,7 @@ with DAG('emr_test',
         task_id='create_job_flow',
         aws_conn_id='aws_default',
         emr_conn_id='emr_default',
+        region_name='us-west-2',
         job_flow_overrides=emr_settings
     )
 
