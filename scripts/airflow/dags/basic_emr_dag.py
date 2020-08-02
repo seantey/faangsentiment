@@ -90,7 +90,7 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
 
 
 # Initialize DAG
-with DAG('lambda_test',
+with DAG('emr_test',
          default_args=default_args_dag,
          description='Simple EMR test DAG',
          schedule_interval=timedelta(hours=1),
