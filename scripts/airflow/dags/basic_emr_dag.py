@@ -2,12 +2,9 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.utils.dates import days_ago
 
-from airflow.contrib.operators.emr_create_job_flow_operator import (
-    EmrCreateJobFlowOperator,
-    EmrAddStepsOperator,
-    EmrTerminateJobFlowOperator
-)
-
+from airflow.contrib.operators.emr_create_job_flow_operator import EmrCreateJobFlowOperator
+from airflow.contrib.operators.emr_add_steps_operator import
+from airflow.contrib.operators.emr_terminate_job_flow_operator import EmrTerminateJobFlowOperator
 from airflow.contrib.sensors.emr_step_sensor import EmrStepSensor
 
 # Default ARGS passed into all operators
