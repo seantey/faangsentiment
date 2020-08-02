@@ -5,6 +5,9 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
 
+# Just a test. TODO remove later
+from airflow.providers.amazon.aws.operators.emr_create_job_flow import EmrCreateJobFlowOperator
+
 import boto3
 
 # Default ARGS passed into all operators
@@ -45,17 +48,14 @@ def basic_lambda_test():
 
 
 # Initialize DAG
-# Modification of example from:
-# https://www.sicara.ai/blog/2019-01-28-automate-aws-tasks-thanks-to-airflow-hooks
 with DAG('lambda_test',
          default_args=default_args,
          description='Simple lambda hook test DAG',
-         schedule_interval=timedelta(minutes=2)
+         schedule_interval=timedelta(minutes=2),
+         catchup=False,
+         max_active_runs=1
          ) as dag:
 
-    # dummy_start_task = DummyOperator(
-    #     task_id='dummy_start'
-    # )
 
     lambda_test = PythonOperator(
         task_id='lambda_test',
@@ -63,3 +63,4 @@ with DAG('lambda_test',
     )
 
     # dummy_start_task >> lambda_test
+    lambda_test
