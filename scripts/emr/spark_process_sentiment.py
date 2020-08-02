@@ -92,8 +92,6 @@ def process_analysis_window(analysis_window, data_table, results_table):
                         .appName("SparkTest")  # Set app name
                         .getOrCreate())
 
-    print('@@@ THIS MAY FAIL')
-    print(spark)
 
     # TODO use logger
     print('@@@Started Spark Session')
