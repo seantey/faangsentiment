@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ~
 
 # Prepare for Docker installation.
 # https://docs.docker.com/engine/install/ubuntu/
