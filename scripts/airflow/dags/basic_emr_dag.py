@@ -138,8 +138,8 @@ with DAG('lambda_test',
         trigger_rule="all_done"
     )
 
-    create_job_flow >> add_step
-    add_step >> watch_prev_step
+    create_job_flow >> spark_step
+    spark_step >> watch_prev_step
     watch_prev_step >> terminate_job_flow
 
 # For reference, original CLI export output
