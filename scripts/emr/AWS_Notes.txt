@@ -3,3 +3,5 @@
 2. EMR Configuration JSON notes:
     * "maximizeResourceAllocation" set to "true" automatically defines best configuration for EMR cluster however there are some slight caveats that can be further improved on.
     * Details of possible improvements: https://stackoverflow.com/questions/34003759/
+
+3. To code being run by the EMR cluster is also stored on an S3 bucket and is read directly from there.

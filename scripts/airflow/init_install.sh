@@ -51,8 +51,6 @@ git clone https://github.com/seantey/faangsentiment.git
 # Copy dags to docker-airflow dag folder which is mapped into the container due to settings in compose yml.
 cp -r faangsentiment/scripts/airflow/dags/* docker-airflow/dags/
 
-cd docker-airflow/
-
 # Add requirements txt to docker-airflow folder
 cp faangsentiment/scripts/airflow/requirements.txt docker-airflow/requirements.txt
 
