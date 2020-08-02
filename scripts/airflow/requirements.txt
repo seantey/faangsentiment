@@ -1,3 +1,4 @@
 boto3
+pytz
 apache-airflow[amazon]
 apache-airflow-backport-providers-amazon
