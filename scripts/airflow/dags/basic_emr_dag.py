@@ -87,7 +87,7 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
                 "VisibleToAllUsers": True,
                 "ScaleDownBehavior": "TERMINATE_AT_TASK_COMPLETION",
                 "JobFlowRole": "EMR_EC2_DefaultRole",
-                "ServiceRole": "EMR_DefaultRole"
+                "ServiceRole": "EMR_DefaultRole",
                 "AutoScalingRole": "EMR_AutoScaling_DefaultRole",
                 }
 
