@@ -1,1 +1,3 @@
 boto3
+apache-airflow[amazon]
+apache-airflow-backport-providers-amazon
