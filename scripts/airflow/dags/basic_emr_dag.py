@@ -53,7 +53,7 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
                         }
                     ],
                     "Ec2KeyName": "faangsentiment",
-                    "KeepJobFlowAliveWhenNoSteps": False,
+                    "KeepJobFlowAliveWhenNoSteps": True,
                     'EmrManagedMasterSecurityGroup': 'sg-09b3c42a901efc6cb',
                     'EmrManagedSlaveSecurityGroup': 'sg-0f9d167925a286239',
                     "TerminationProtected": True,
