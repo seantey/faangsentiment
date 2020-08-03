@@ -24,8 +24,8 @@ def invoke_lambda(**func_args):
     # TODO use logger, although airflow might not log this.
     print(data)
 
-### EMR task related code
 
+### EMR task related code
 emr_cluster_name = "faangsentiment_spark"
 spark_script_s3_path = "s3://faangsentiment-scripts/emr/spark_process_sentiment.py"
 
@@ -33,7 +33,7 @@ spark_script_s3_path = "s3://faangsentiment-scripts/emr/spark_process_sentiment.
 # The way I configure this is to first create an EMR Cluster from the AWS Web Console then export the CLI commands
 # Then translate the CLI commands to a format compatible with the format from:
 # https://docs.aws.amazon.com/emr/latest/APIReference/API_RunJobFlow.html#API_RunJobFlow_Examples
-emr_settings = {"Name": "faangsentiment_spark_EMR_TEST_notebook",
+emr_settings = {"Name": emr_cluster_name,
                 "LogUri": "s3://aws-logs-722339694227-us-west-2/elasticmapreduce/",
                 "ReleaseLabel": "emr-5.30.1",
                 "EbsRootVolumeSize": 10,
