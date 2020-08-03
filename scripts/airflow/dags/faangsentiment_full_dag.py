@@ -56,7 +56,7 @@ def invoke_lambda(lambda_function_name, timeout_sec, **context):
 
     payload_dict = {'analysis_window': analysis_window}
 
-    response = client.invoke(
+    response = lambda_client.invoke(
         FunctionName=lambda_function_name,
         Payload=json.dumps(payload_dict),
         InvocationType="RequestResponse",
