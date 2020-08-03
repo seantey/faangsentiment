@@ -89,7 +89,7 @@ emr_settings = {"Name": emr_cluster_name,
                             "Name": "Master nodes",
                             "Market": "ON_DEMAND",
                             "InstanceRole": "MASTER",
-                            "InstanceType": "m4.large",
+                            "InstanceType": "m5.xlarge",
                             "InstanceCount": 1,
                             "EbsConfiguration": {"EbsBlockDeviceConfigs":
                                 [{"VolumeSpecification": {"SizeInGB": 32, "VolumeType": "gp2"}, "VolumesPerInstance": 1}]
@@ -99,7 +99,7 @@ emr_settings = {"Name": emr_cluster_name,
                             "Name": "Slave nodes",
                             "Market": "ON_DEMAND",
                             "InstanceRole": "CORE",
-                            "InstanceType": "m4.large",
+                            "InstanceType": "m5.xlarge",
                             "InstanceCount": 1,
                             "EbsConfiguration": {"EbsBlockDeviceConfigs":
                                 [{"VolumeSpecification": {"SizeInGB": 32, "VolumeType": "gp2"}, "VolumesPerInstance": 1}]
