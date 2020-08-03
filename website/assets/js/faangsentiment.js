@@ -46,7 +46,7 @@ $.getJSON("https://ujtuh6xr91.execute-api.us-west-2.amazonaws.com/latest_results
 
     // Data has finished loading so we can remove the loading gifs.
     $('.loading-gif').hide();
-    $('.wait-loading').show();
+    $('.wait-loading').css('visibility', 'visible');
 
 
 });
