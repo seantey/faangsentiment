@@ -1,6 +1,8 @@
 ## Make sure that most of the packages needed can be imported
 
 import sys
+import pytz
+from datetime import datetime, timedelta
 
 # Used by DynamoDB Helper
 import boto3
@@ -50,10 +52,18 @@ class DynamoDBHelper:
                     Item=data_row
                 )
 
-    def write_item(self, table_name, item):
+    def write_item(self, table_name, item_key_value_dict):
         target_table = self.dynamodb_conn.Table(table_name)
-        response = target_table.put_item(Item=item)
+        response = target_table.put_item(Item=item_key_value_dict)
         response_code = response['ResponseMetadata']['HTTPStatusCode']
+
+
+def get_time_string(timezone_str='US/Eastern'):
+    
+    timezone = pytz.timezone(timezone_str)
+    fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+
+    return datetime.now().astimezone(timezone).strftime(fmt)
 
 
 def main(args):
@@ -91,8 +101,12 @@ def main(args):
 
     print(news_df.count())
 
-    # Enough for basic test
+    # Add a timestamp in a test dynamodb table
+    time_string = get_time_string(timezone_str='US/Pacific')
+    item_dict = {'test_key': time_string, 'success': 'success'}
 
+    print('Writing timestamp to DynamoDB')
+    dynamo.write_item(table_name='airflow_emr_test', item_key_value_dict=item_dict)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
