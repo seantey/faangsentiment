@@ -7,7 +7,7 @@ from news_api_handler import *
 
 def lambda_handler(event, context):
     analysis_window = event.get('analysis_window')
-    update_FAANG_yahoo_news(current_analysis_group=analysis_window)
+    update_FAANG_yahoo_news(current_analysis_group=analysis_window, target_table='news_data')
 
     return {
         'statusCode': 200,

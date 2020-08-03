@@ -35,7 +35,7 @@ def put_news_data(news_data: dict, table_name: str='test_data') -> dict:
 
 
 # TODO allow changing target table
-def update_FAANG_yahoo_news(current_analysis_group: str):
+def update_FAANG_yahoo_news(current_analysis_group: str, target_table: str):
     """
     Fetch FAANG related news from APIs and uploads them plus some metadata to DynamoDB.
 
@@ -90,7 +90,7 @@ def update_FAANG_yahoo_news(current_analysis_group: str):
                 'news_content': news_content
             }
             
-            response = put_news_data(data_row, 'test_data')
+            response = put_news_data(data_row, target_table)
             response_code = response['ResponseMetadata']['HTTPStatusCode']
             responses.append(response_code)
             

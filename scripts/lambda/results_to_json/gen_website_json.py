@@ -6,14 +6,14 @@ from boto3.dynamodb.conditions import Key
 
 from datetime import datetime, timedelta
 
-def json_from_analysis_window(analysis_window):
+def json_from_analysis_window(analysis_window, read_table_name: str = 'test_results'):
 
     # Get the current datetime object
     today_str = analysis_window[:10]
     today_dt = datetime.strptime(today_str, '%Y-%m-%d')
 
     # Initialize DynamoDB connection
-    table_name  = 'test_results'
+    table_name = read_table_name
     index_name = 'analysis_date_index'
 
     dynamodb = boto3.resource('dynamodb')
