@@ -110,7 +110,7 @@ def run_emr_job():
     """
         Launches an EMR clusters, runs a spark script, terminates when done.
     """
-    client = boto3.client('emr')
+    client = boto3.client('emr', region_name='us-west-2')
     response = client.run_job_flow(**emr_settings)
     jobflow_id = response['JobFlowId']
     client.add_job_flow_steps(JobFlowId=jobflow_id, Steps=spark_step_config)
