@@ -33,7 +33,7 @@ def main(args):
     # e.g. $ spark-submit spark-script.py 2020-07-25_Hour=00
     # or $ spark-submit spark-script.py --test
     # or throw error when no analysis window given
-    test_mode = True
+    test_mode = False
     print(f'@@@@@@@ Arguments: {args}')
 
     # TODO remove quotes around args
