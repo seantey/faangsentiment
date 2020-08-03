@@ -66,7 +66,7 @@ def invoke_lambda(lambda_function_name, timeout_sec, **context):
         raise ValueError('Lambda function did not successfully execute.')
 
     data = response['Payload'].read()
-    # TODO use logger, although airflow might not log this.
+    # TODO use logger, although airflow may or may not log this, or might need failure callback.
     # This in particular is not that necessary to log though.
     print(data)
 
@@ -227,7 +227,6 @@ with DAG('faaangsentiment_full_pipeline',
         task_id='fetch_news',
         python_callable=invoke_lambda,
         op_kwargs={'lambda_function_name': 'faangsentiment_news', 'timeout_sec': 500},
-        depends_on_past=True,
         provide_context=True  # Needed so that xcom values are visible.
     )
 
@@ -237,7 +236,6 @@ with DAG('faaangsentiment_full_pipeline',
     calculate_sentiment_task = PythonOperator(
         task_id='calculate_sentiment',
         python_callable=run_emr_job,
-        depends_on_past=True,
         provide_context=True
     )
 
@@ -249,7 +247,6 @@ with DAG('faaangsentiment_full_pipeline',
         task_id='convert_to_json',
         python_callable=invoke_lambda,
         op_kwargs={'lambda_function_name': 'results_to_json', 'timeout_sec': 500},
-        depends_on_past=True,
         provide_context=True
     )
 
