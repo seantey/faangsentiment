@@ -1,11 +1,8 @@
+import boto3
 from datetime import timedelta
 from airflow import DAG
 from airflow.utils.dates import days_ago
-
-from airflow.contrib.operators.emr_create_job_flow_operator import EmrCreateJobFlowOperator
-from airflow.contrib.operators.emr_add_steps_operator import EmrAddStepsOperator
-from airflow.contrib.operators.emr_terminate_job_flow_operator import EmrTerminateJobFlowOperator
-from airflow.contrib.sensors.emr_step_sensor import EmrStepSensor
+from airflow.operators.python_operator import PythonOperator
 
 # Default ARGS passed into all operators
 default_args_dag = {
@@ -20,12 +17,15 @@ default_args_dag = {
     'execution_timeout': timedelta(minutes=35)
 }
 
+emr_cluster_name = "faangsentiment_spark_EMR_TEST"
+spark_script_s3_path = "s3://faangsentiment-scripts/emr/test_spark_emr.py"
+
 # Create Job Flow Config references
 # The way I configure this is to first create an EMR Cluster from the AWS Web Console then export the CLI commands
 # Then translate the CLI commands to a format compatible with the format from:
 # https://docs.aws.amazon.com/emr/latest/APIReference/API_RunJobFlow.html#API_RunJobFlow_Examples
 # Also useful reference: https://github.com/popoaq/airflow-dags/blob/dd929644e35afe07f2633daf98c7b1026da1390a/dags/finance.py
-emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
+emr_settings = {"Name": emr_cluster_name,
                 "LogUri": "s3://aws-logs-722339694227-us-west-2/elasticmapreduce/",
                 "ReleaseLabel": "emr-5.30.1",
                 "EbsRootVolumeSize": 10,
@@ -87,6 +87,26 @@ emr_settings = {"Name": "faangsentiment_spark_EMR_TEST",
                 "AutoScalingRole": "EMR_AutoScaling_DefaultRole"
                 }
 
+spark_step_config = [
+    {
+        "Name": "PySpark application",
+        "ActionOnFailure": "TERMINATE_CLUSTER",
+        "HadoopJarStep": {
+            "Jar": "command-runner.jar",
+            "Args": ["spark-submit", "--deploy-mode", "cluster",
+                        spark_script_s3_path]
+        }
+    }
+]
+
+def run_emr_job():
+    """
+        Launches an EMR clusters, runs a spark script, terminates when done.
+    """
+    client = boto3.client('emr')
+    response = client.run_job_flow(**emr_settings)
+    jobflow_id = response['JobFlowId']
+    client.add_job_flow_steps(JobFlowId=jobflow_id, Steps=spark_step_config)
 
 # Initialize DAG
 with DAG('emr_test',
@@ -97,112 +117,9 @@ with DAG('emr_test',
          max_active_runs=1
          ) as dag:
 
-    create_job_flow = EmrCreateJobFlowOperator(
-        task_id='create_job_flow',
-        aws_conn_id='aws_default',
-        emr_conn_id='emr_default',
-        region_name='us-west-2',
-        job_flow_overrides=emr_settings
+    calculate_sentiment_task = PythonOperator(
+        task_id='calculate_sentiment',
+        python_callable=run_emr_job
     )
 
-    spark_step_config = [
-        {
-            "Name": "PySpark application",
-            "ActionOnFailure": "TERMINATE_CLUSTER",
-            "HadoopJarStep": {
-                "Jar": "command-runner.jar",
-                "Args": ["spark-submit", "--deploy-mode", "cluster",
-                         "s3://faangsentiment-scripts/emr/test_spark_emr.py"]
-            }
-        }
-    ]
-
-    spark_step = EmrAddStepsOperator(
-        task_id='add_spark_step',
-        job_flow_id="{{ task_instance.xcom_pull('create_job_flow', key='return_value') }}",
-        aws_conn_id='aws_default',
-        steps=spark_step_config
-    )
-
-    watch_prev_step = EmrStepSensor(
-        task_id='watch_prev_step',
-        job_flow_id="{{ task_instance.xcom_pull('create_job_flow', key='return_value') }}",
-        step_id="{{ task_instance.xcom_pull('add_step', key='return_value')[0] }}",
-        aws_conn_id='aws_default'
-    )
-
-    terminate_job_flow = EmrTerminateJobFlowOperator(
-        task_id='terminate_job_flow',
-        job_flow_id="{{ task_instance.xcom_pull('create_job_flow', key='return_value') }}",
-        aws_conn_id='aws_default',
-        trigger_rule="all_done"
-    )
-
-    create_job_flow >> spark_step
-    spark_step >> watch_prev_step
-    watch_prev_step >> terminate_job_flow
-
-# For reference, original CLI export output
-# aws emr create-cluster
-# --termination-protected 
-# --applications Name=Hadoop Name=Spark 
-# --ec2-attributes 
-# {"KeyName":"faangsentiment",
-# "InstanceProfile":"EMR_EC2_DefaultRole",
-# "SubnetId":"subnet-1760af6f",
-# "EmrManagedSlaveSecurityGroup":"sg-09b3c42a901efc6cb",
-# "EmrManagedMasterSecurityGroup":"sg-0f9d167925a286239"} 
-
-# --release-label emr-5.30.1 --log-uri 's3n://aws-logs-722339694227-us-west-2/elasticmapreduce/' 
-
-# --steps
-# [
-#     {"Args":["spark-submit","--deploy-mode","cluster","s3://faangsentiment-scripts/emr/test_spark_emr.py"],
-#     "Type":"CUSTOM_JAR",
-#     "ActionOnFailure":"TERMINATE_CLUSTER",
-#     "Jar":"command-runner.jar",
-#     "Properties":"","Name":"Spark application"}
-# ]
-
-# --instance-groups 
-# [
-#     {"InstanceCount":1,
-#         "EbsConfiguration":{"EbsBlockDeviceConfigs":
-#                                 [{"VolumeSpecification": {"SizeInGB":32,"VolumeType":"gp2"},"VolumesPerInstance":1}]
-#                             },
-#         "InstanceGroupType":"MASTER",
-#         "InstanceType":"m4.large","Name":"Master - 1"
-#     },
-#     {"InstanceCount":1,
-#         "EbsConfiguration":{"EbsBlockDeviceConfigs":
-#                                 [{"VolumeSpecification":{"SizeInGB":32,"VolumeType":"gp2"},"VolumesPerInstance":1}]
-#                             },
-#         "InstanceGroupType":"CORE",
-#         "InstanceType":"m4.large","Name":"Core - 2"}
-# ]
-
-# --configurations 
-# [
-#     {"Classification":"spark-env",
-#     "Properties":{},
-#     "Configurations":[{"Classification":"export","Properties":{"PYSPARK_PYTHON":"/usr/bin/python3"}}]
-#     },
-#     {"Classification":"spark","Properties":{"maximizeResourceAllocation":"true"}}]
-
-# @@@@@@@@@@@@@@@@@@@--auto-terminate 
-
-# --auto-scaling-role EMR_AutoScaling_DefaultRole 
-
-# --bootstrap-actions '[{"Path":"s3://faangsentiment-scripts/emr/emr_bootstrap_install.sh","Name":"Custom action"}]' 
-
-# --ebs-root-volume-size 10 
-
-# --service-role EMR_DefaultRole 
-
-# --enable-debugging 
-
-# --name 'EMR_Test' 
-
-# --scale-down-behavior TERMINATE_AT_TASK_COMPLETION 
-
-# @@@@@@@@@@@@@@--region us-west-2
+    calculate_sentiment_task
