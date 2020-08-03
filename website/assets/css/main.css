@@ -2969,7 +2969,18 @@ input, select, textarea {
 			/* GOOG Sentiment Label */
 			#GOOG-sentiment-color {
 				color: #1a9641; 
-			}				
+			}	
+			
+			/* Wait for data to load */
+
+			.wait-loading {
+				visibility: hidden;
+			}
+
+			.loading-gif img {
+				display:block;
+				margin:auto;
+			}
 
 
 			/* .tiles article.style6 > .image:before {
