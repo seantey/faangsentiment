@@ -1,27 +1,73 @@
 import boto3
-from datetime import timedelta
+import botocore
+import json
+import pytz
+
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.python_operator import PythonOperator
 
+# Useful XCom references:
+# https://stackoverflow.com/questions/50093718/
+# http://michal.karzynski.pl/blog/2017/03/19/developing-workflows-with-apache-airflow/
+
+
+### Generate Analysis Window String
+# This will be the first task in the dag and the generated string
+# will be passed to other tasks using xcom.
+
+def generate_analysis_window_str(**context):
+    """
+    Generate a string that looks like: YYYY-mm-dd_Hour=HH, e.g. 2020-07-30_Hour=13
+
+    For this application, we will always be using time relative to Eastern Time.
+    """
+    timezone_str = 'US/Eastern'
+    timezone = pytz.timezone(timezone_str)
+    fmt = '%Y-%m-%d_Hour=%H'
+
+    analysis_window_str = datetime.now().astimezone(timezone).strftime(fmt)
+
+    # Push data with XCom
+    task_instance = context['task_instance']
+    task_instance.xcom_push('analysis_window', analysis_window_str)
+
 
 ### Lambda task related code
-
-# News API Task
-
-def invoke_lambda(**func_args):
+# Modified version of https://github.com/boto/boto3/issues/2424
+def invoke_lambda(lambda_function_name, timeout_sec, **context):
     """
     Invokes the lambda function for given lambda function name
     """
-    lambda_client = boto3.client('lambda', region_name='us-west-2')
-    response = lambda_client.invoke(
-            FunctionName=func_args['lambda_func_name'],
-            InvocationType='RequestResponse'
+    config = botocore.config.Config(
+        read_timeout=timeout_sec,
+        connect_timeout=timeout_sec,
+        retries={"max_attempts": 0}  # Let the task fail and DAG will retry
     )
-    data = response['Payload'].read()
 
+    session = boto3.Session()
+    lambda_client = session.client("lambda", region_name='us-west-2', config=config)
+
+    task_instance = context['task_instance']
+    analysis_window = task_instance.xcom_pull(key='analysis_window',
+                                              task_ids='gen_window_str')
+
+    payload_dict = {'analysis_window': analysis_window}
+
+    response = client.invoke(
+        FunctionName=lambda_function_name,
+        Payload=json.dumps(payload_dict),
+        InvocationType="RequestResponse",
+    )
+
+    if response['StatusCode'] != 200:
+        raise ValueError('Lambda function did not successfully execute.')
+
+    data = response['Payload'].read()
     # TODO use logger, although airflow might not log this.
+    # This in particular is not that necessary to log though.
     print(data)
 
 
@@ -92,28 +138,49 @@ emr_settings = {"Name": emr_cluster_name,
                 }
 
 
-# EMR configuration to fetch and run PySpark code.
-spark_step_config = [
-    {
-        "Name": "PySpark application",
-        "ActionOnFailure": "TERMINATE_CLUSTER",
-        "HadoopJarStep": {
-            "Jar": "command-runner.jar",
-            "Args": ["spark-submit", "--deploy-mode", "cluster",
-                        spark_script_s3_path]
-        }
-    }
-]
-
-
-def run_emr_job():
+def run_emr_job(**context):
     """
         Launches an EMR clusters, runs a spark script, terminates when done.
     """
     client = boto3.client('emr', region_name='us-west-2')
-    response = client.run_job_flow(**emr_settings)
-    jobflow_id = response['JobFlowId']
-    client.add_job_flow_steps(JobFlowId=jobflow_id, Steps=spark_step_config)
+    response_create = client.run_job_flow(**emr_settings)
+    jobflow_id = response_create['JobFlowId']
+
+    task_instance = context['task_instance']
+    analysis_window = task_instance.xcom_pull(key='analysis_window',
+                                              task_ids='gen_window_str')
+
+    # EMR configuration to fetch and run PySpark code.
+    spark_step_config = [
+        {
+            "Name": "PySpark application",
+            "ActionOnFailure": "TERMINATE_CLUSTER",
+            "HadoopJarStep": {
+                "Jar": "command-runner.jar",
+                "Args": ["spark-submit", "--deploy-mode", "cluster",
+                         spark_script_s3_path, analysis_window]
+            }
+        }
+    ]
+    response_add = client.add_job_flow_steps(JobFlowId=jobflow_id, Steps=spark_step_config)
+    # In our case we usually only have on step which is running the spark script.
+    step_id = response_add['StepIds'][0]
+
+    # Add waiter which basically blocks the function from continuing until Spark script finishes.
+    # Ref: https://stackoverflow.com/questions/44798259/
+
+    waiter = client.get_waiter("step_complete")
+    waiter.wait(
+        ClusterId=jobflow_id,
+        StepId=step_id,
+        WaiterConfig={
+            # Wait 30 seconds before polling again.
+            "Delay": 30,
+            # Poll 50 times for a total of 1500 seconds or 25 minutes.
+            # Make sure the total poll time is enough for the cluster to finish its job.
+            "MaxAttempts": 50
+        }
+    )
 
 
 ### Dag related code
@@ -126,17 +193,18 @@ default_dag_args = {
     'email': ['airflow@faangsentiment.app'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 2,
+    'retries': 1,
     'retry_delay': timedelta(minutes=3),
     'execution_timeout': timedelta(minutes=35)
 }
 
 # Initialize DAG
-# Full pipeline consists of 3 stages:
-# (1) Pull data from news apis by invoking AWS Lambda function which stores the data in DynamoDB
-# (2) Start EMR Cluster which pulls and processes the news data then stores it in a different
+# Full pipeline consists of 4 stages:
+# (1) Generate analysis window string which is required by the other tasks.
+# (2) Pull data from news apis by invoking AWS Lambda function which stores the data in DynamoDB
+# (3) Start EMR Cluster which pulls and processes the news data then stores it in a different
 # DynamoDB table and the configuration will terminate the cluster once the SparkJob is complete.
-# (3) Fetch the sentiment analysis results then process and subsets the data to a JSON format
+# (4) Fetch the sentiment analysis results then process and subsets the data to a JSON format
 # compatible with the faangsentiment.app website and stores it in another table which is
 # pulled by the website javascript code.
 with DAG('faaangsentiment_full_pipeline',
@@ -144,32 +212,45 @@ with DAG('faaangsentiment_full_pipeline',
          description='FaangSentiment Full DAG',
          schedule_interval='0 * * * *',  # Start at beginning of every hour i.e. every minute zero
          catchup=False,  # Do not backfill when starting DAG
-         max_active_runs=1
+         max_active_runs=2
          ) as dag:
 
-    # (1) Pull data from news apis by invoking AWS Lambda function which stores the data in DynamoDB
+    # (1) Generate analysis window string which is required by the other tasks.
+    gen_analysis_window_task = PythonOperator(
+        task_id='gen_window_str',
+        python_callable=generate_analysis_window_str,
+        provide_context=True  # Needed so that xcom values are visible.
+    )
+
+    # (2) Pull data from news apis by invoking AWS Lambda function which stores the data in DynamoDB
     fetch_news_task = PythonOperator(
         task_id='fetch_news',
         python_callable=invoke_lambda,
-        op_kwargs={'lambda_func_name': 'faangsentiment_news'}
+        op_kwargs={'lambda_function_name': 'faangsentiment_news', 'timeout_sec': 500},
+        depends_on_past=True,
+        provide_context=True  # Needed so that xcom values are visible.
     )
 
-    # (2) Start EMR Cluster which pulls and processes the news data then stores it in a different
+    # (3) Start EMR Cluster which pulls and processes the news data then stores it in a different
     # DynamoDB table and the configuration will terminate the cluster once the SparkJob is complete.
 
     calculate_sentiment_task = PythonOperator(
         task_id='calculate_sentiment',
-        python_callable=run_emr_job
+        python_callable=run_emr_job,
+        depends_on_past=True,
+        provide_context=True
     )
 
-    # (3) Fetch the sentiment analysis results then process and subsets the data to a JSON format
+    # (4) Fetch the sentiment analysis results then process and subsets the data to a JSON format
     # compatible with the faangsentiment.app website and stores it in another table which is
     # pulled by the website javascript code.
 
     convert_to_json_task = PythonOperator(
         task_id='convert_to_json',
         python_callable=invoke_lambda,
-        op_kwargs={'lambda_func_name': 'results_to_json'}
+        op_kwargs={'lambda_function_name': 'results_to_json', 'timeout_sec': 500},
+        depends_on_past=True,
+        provide_context=True
     )
 
-    fetch_news_task >> calculate_sentiment_task >> convert_to_json_task
+    gen_analysis_window_task >> fetch_news_task >> calculate_sentiment_task >> convert_to_json_task
