@@ -6,16 +6,16 @@ from datetime import datetime, timedelta
 
 
 def get_time_stamp(timezone_str='US/Eastern'):
-    
+
     timezone = pytz.timezone(timezone_str)
-    
+
     # This is actually always epoch time (UTC) and does not have timezone embeded
     # TODO refactor code base to make this more obvious
     return datetime.now().astimezone(timezone).timestamp()
 
 
 def get_time_string(timezone_str='US/Eastern'):
-    
+
     timezone = pytz.timezone(timezone_str)
     fmt = '%Y-%m-%d %H:%M:%S %Z%z'
 
@@ -33,6 +33,16 @@ def subtract_X_days(ts, days_to_subtract):
     return new_datetime
 
 
+def generate_analysis_window_str(timezone_str='US/Eastern'):
+    """
+    Generate a string that looks like: YYYY-mm-dd_Hour=HH, e.g. 2020-07-30_Hour=13
+    """
+    timezone = pytz.timezone(timezone_str)
+    fmt = '%Y-%m-%d_Hour=%H'
+
+    return datetime.now().astimezone(timezone).strftime(fmt)
+
+
 def alt_utc():
     """
     Alternative for UTC time only.
@@ -43,5 +53,5 @@ def alt_utc():
     utc_str = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
     # Alternative: convert UTC timestamp to datetime then to string
     # datetime.datetime.fromtimestamp(d).strftime("%Y-%m-%d %H:%M:%S")
-    
+
     return utc_timestamp, utc_str
