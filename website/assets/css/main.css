@@ -2997,6 +2997,27 @@ input, select, textarea {
 				margin:auto;
 			}
 
+			/* Backend Infrastructure Section */
+
+
+			section #backend-design {
+				margin-top: 8em;
+			}
+
+			#backend-svg {
+				overflow: auto;
+			}
+			#backend-svg img{
+				display:block;
+				margin:auto;			
+			}
+
+			/* NLP Algorithm Details Section */
+
+			section #nlp-detail {
+				margin-top: 5em;
+			}
+
 
 			/* .tiles article.style6 > .image:before {
 				background-color: #8499e7;
