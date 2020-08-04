@@ -22,4 +22,4 @@ Make sure that there are the following 3 tables in the DynamoDB:
 (Note for that the tables above, default settings work fine, but might want to tweak read and write capacity depending on workload to save a little bit more money. Defaults should fall under free tier usage for first year.)
 
 ### Lambda / Website JSON notes:
-1. Make sure to run the news collection api for at least 7 days before starting the dags so that there is enough data for the website which is processed by the results_to_json lambda function.
+1. Make sure to run the news collection api for at least 7 days before starting the Ariflow DAGs so that there is enough data for the website which is processed by the results_to_json lambda function.
