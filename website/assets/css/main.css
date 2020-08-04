@@ -3438,8 +3438,9 @@ input, select, textarea {
 /* Footer */
 
 	#footer {
-		padding: 5em 0 6em 0 ;
-		background-color: #f6f6f6;
+		padding: 1em 0 1em 0 ;
+		/* background-color: #f6f6f6; */
+		background-color: #212121;
 	}
 
 		#footer > .inner {
@@ -3477,7 +3478,8 @@ input, select, textarea {
 				margin-top: 5em;
 				list-style: none;
 				font-size: 0.8em;
-				color: rgba(88, 88, 88, 0.5);
+				/* color: rgba(88, 88, 88, 0.5); */
+				color: #e5e5e5;
 			}
 
 				#footer > .inner .copyright a {
