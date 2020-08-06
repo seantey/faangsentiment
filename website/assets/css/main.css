@@ -2709,6 +2709,10 @@ input, select, textarea {
 			 ****** Custom CSS Section *****
 			********************************/
 
+			#main {
+				padding-bottom: 0 !important;
+			}
+
 			/* Header related */
 			#title-logo-div {
 				display:block;

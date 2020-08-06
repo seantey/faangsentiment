@@ -235,7 +235,7 @@
 										<li>Website Serving: Route 53, CloudFront, Certificate Manager</li>
 									</ol>
 									<!-- <p>Every hour an Airflow DAG (Directed Acyclic Graph) will trigger a group of tasks that generates the sentiment score and label for the latest news.</p> -->
-									<p>Currently, the application is scheduled to collect and process data at an hourly rate in order to minimize cost, however, the application is designed to be capable of easily scaling beyond just the five stocks above (FAANG stocks) through the integration of AWS Lambda, EMR, and DynamoDB in the processing pipeline.</p>
+									<p>Currently, the application is scheduled to collect and process data at an hourly rate in order to minimize cost, however, the application is designed to be capable of easily scaling beyond just the five stocks above (FAANG stocks) thanks to the integration of AWS Lambda, EMR, and DynamoDB in the processing pipeline.</p>
 									<p>Because of the serverless nature of AWS Lambda plus the high performance and scalability of DynamoDB, we can easily fetch news data for more stocks by simply providing a bigger list of stock tickers of interest.</p>
 									<p>By utilizing Apache Spark and provisioning more instances in the EMR Cluster or turning on the auto-scaling feature, we can easily scale the sentiment analysis component.<p>
 									<p>The website is also capable of handling millions of requests effortlessly and at a very cost efficient manner through the combination of hosting on S3, taking advantage of a CloudFront cache, and the relatively cheap cost of running an Amazon API Gateway that calls a simple Lambda function.</p>
@@ -255,14 +255,6 @@
 
 						</div>
 
-
-
-
-
-
-
-
-
 					</div>
 
 
@@ -281,7 +273,7 @@
 							</section> -->
 
 
-							
+
 							<!-- <section>
 								<h2>Get in touch</h2>
 								<form method="post" action="#">
