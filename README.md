@@ -22,3 +22,6 @@ By utilizing Apache Spark and provisioning more instances in the EMR Cluster or 
 
 The website is also capable of handling millions of requests effortlessly and at a very cost efficient manner through the combination of hosting on S3, taking advantage of a CloudFront cache, and the relatively cheap cost of running an Amazon API Gateway that calls a simple Lambda function.
 
+## NLP Algorithm Details
+
+(Coming soon...)
