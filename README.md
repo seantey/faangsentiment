@@ -2,7 +2,7 @@
 
 Live FAANG Stock Sentiment Tracker
 
-Link to website: [https://faangsentiment.app]
+Link to website: https://faangsentiment.app
 
 ## Backend Infrastructure Design
 
