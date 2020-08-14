@@ -1,6 +1,11 @@
-# faangsentiment
+# FAANGSentiment.app
+
 Live FAANG Stock Sentiment Tracker
 
-WIP
+Link to website: [https://faangsentiment.app]
 
-Link: [https://faangsentiment.app]
+## Backend Infrastructure Design
+
+![Backend Infrastructure Design Img: ](website/images/backend_design.svg "Title")
+
+
